@@ -112,6 +112,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Width = 840
       Height = 280
       Align = alBottom
+      DataSource = dsPedidoProdutos
       TabOrder = 5
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
@@ -224,12 +225,13 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ImageIndex = 1
       Images = ilImagens
       TabOrder = 0
+      OnClick = btnGravarPedidoClick
       ExplicitHeight = 41
     end
   end
   object ilImagens: TImageList
-    Left = 760
-    Top = 64
+    Left = 528
+    Top = 432
     Bitmap = {
       494C010102000800040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
@@ -369,5 +371,9 @@ object FrmPedidoVenda: TFrmPedidoVenda
       FBDF7FFE00000000F7EF700E00000000EFF777EC00000000FFFF77A900000000
       FFFF77A300000000FFFF00070000000000000000000000000000000000000000
       000000000000}
+  end
+  object dsPedidoProdutos: TDataSource
+    Left = 768
+    Top = 179
   end
 end

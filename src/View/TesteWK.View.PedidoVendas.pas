@@ -27,6 +27,7 @@ resourcestring
   msCancelPrompt = 'Informe o Número do Pedido a ser Cancelado';
   msCancelInvalido = 'O Número de Pedido informado é inválido.';
   msCancelZerado = 'O Número de Pedido deve ser maior que 0.';
+  msPedidoGravadoSucesso = 'Pedido de Venda gravado com Sucesso.';
 
 type
   TFrmPedidoVenda = class(TForm)
@@ -47,7 +48,9 @@ type
     edtDataEmissao: TLabeledEdit;
     edtNumeroPedido: TLabeledEdit;
     btnCancelarPedido: TButton;
+    dsPedidoProdutos: TDataSource;
     procedure btnCancelarPedidoClick(Sender: TObject);
+    procedure btnGravarPedidoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -74,6 +77,11 @@ begin
   except on E: Exception do
     MessageDlg(E.Message, TMsgDlgType.mtError, [mbOk], 0);
   end;
+end;
+
+procedure TFrmPedidoVenda.btnGravarPedidoClick(Sender: TObject);
+begin
+  MessageDlg(msPedidoGravadoSucesso, mtInformation, [mbOK], 0);
 end;
 
 end.
