@@ -20,7 +20,7 @@ type
     property CodigoCliente: Integer read FCodigoCliente write FCodigoCliente;
     property ValorTotal: Currency read FValorTotal write FValorTotal;
     property Produtos: TObjectList<TProduto> read FProdutos write FProdutos;
-    constructor Create;
+    constructor Create(ACodigoCliente : Integer);
     destructor Destroy; override;
   end;
 
@@ -28,8 +28,13 @@ implementation
 
 { TPedidoVenda }
 
-constructor TPedidoVenda.Create;
+constructor TPedidoVenda.Create(ACodigoCliente : Integer);
 begin
+  inherited Create;
+  FNumeroPedido := 0;
+  FDataEmissao := Now;
+  FCodigoCliente := ACodigoCliente;
+  FValorTotal := 0;
   FProdutos := TObjectList<TProduto>.Create;
 end;
 

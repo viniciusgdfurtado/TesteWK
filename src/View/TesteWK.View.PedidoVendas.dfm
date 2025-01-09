@@ -12,6 +12,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
   TextHeight = 15
   object pnlCabecalho: TPanel
     Left = 0
@@ -34,6 +35,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       NumbersOnly = True
       TabOrder = 2
       Text = ''
+      OnExit = edtCodClienteExit
     end
     object edtNomeCliente: TEdit
       Left = 79
@@ -104,8 +106,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 57
-    ExplicitHeight = 374
     object grdProdutos: TDBGrid
       Left = 0
       Top = 52
@@ -113,12 +113,41 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Height = 280
       Align = alBottom
       DataSource = dsPedidoProdutos
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
       TabOrder = 5
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -12
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
+      OnKeyDown = grdProdutosKeyDown
+      Columns = <
+        item
+          Expanded = False
+          FieldName = 'CodigoProduto'
+          Title.Caption = 'C'#243'digo Produto'
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Descricao'
+          Title.Caption = 'Descri'#231#227'o'
+          Width = 534
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'Quantidade'
+          Width = 76
+          Visible = True
+        end
+        item
+          Expanded = False
+          FieldName = 'PrecoVenda'
+          Title.Caption = 'Preco de Venda'
+          Width = 107
+          Visible = True
+        end>
     end
     object edtCodProduto: TLabeledEdit
       Left = 9
@@ -133,6 +162,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       NumbersOnly = True
       TabOrder = 0
       Text = ''
+      OnExit = edtCodProdutoExit
     end
     object edtQuantidade: TLabeledEdit
       Left = 485
@@ -186,6 +216,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Height = 25
       Caption = 'Inserir Item'
       TabOrder = 4
+      OnClick = btnInserirItemClick
     end
   end
   object pnlRodape: TPanel
@@ -196,8 +227,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitTop = 402
-    ExplicitWidth = 837
     object lblValorTotalPedido: TLabel
       Left = 604
       Top = 6
@@ -225,8 +254,8 @@ object FrmPedidoVenda: TFrmPedidoVenda
       ImageIndex = 1
       Images = ilImagens
       TabOrder = 0
+      Visible = False
       OnClick = btnGravarPedidoClick
-      ExplicitHeight = 41
     end
   end
   object ilImagens: TImageList
@@ -373,7 +402,57 @@ object FrmPedidoVenda: TFrmPedidoVenda
       000000000000}
   end
   object dsPedidoProdutos: TDataSource
-    Left = 768
-    Top = 179
+    DataSet = mmProdutosTemp
+    Left = 744
+    Top = 315
+  end
+  object mmProdutosTemp: TFDMemTable
+    Active = True
+    FieldDefs = <
+      item
+        Name = 'CodigoProduto'
+        DataType = ftInteger
+      end
+      item
+        Name = 'Descricao'
+        DataType = ftString
+        Size = 100
+      end
+      item
+        Name = 'Quantidade'
+        DataType = ftInteger
+      end
+      item
+        Name = 'PrecoVenda'
+        DataType = ftCurrency
+        Precision = 19
+      end>
+    IndexDefs = <>
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    StoreDefs = True
+    Left = 744
+    Top = 259
+    object mmProdutosTempCodigoProduto: TIntegerField
+      DisplayWidth = 16
+      FieldName = 'CodigoProduto'
+    end
+    object mmProdutosTempDescricao: TStringField
+      DisplayWidth = 100
+      FieldName = 'Descricao'
+      Size = 100
+    end
+    object mmProdutosTempQuantidade: TIntegerField
+      FieldName = 'Quantidade'
+    end
+    object mmProdutosTempPrecoVenda: TCurrencyField
+      DisplayWidth = 13
+      FieldName = 'PrecoVenda'
+    end
   end
 end
