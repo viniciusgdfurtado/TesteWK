@@ -1,9 +1,10 @@
-## TESTE TÉCNICO
+# Teste Técnico WK
 
 Para que possamos avaliar o seu desempenho técnico, desenvolva o teste descrito neste
 documento da melhor maneira possível, aplicando técnicas de POO, MVC, Clean Code, e
 utilizando ao máximo o seu potencial.
 
+## 💻 Pré-requisitos
 Desenvolva uma tela de pedidos de venda, seguindo os critérios abaixo:
 
 1. O operador deverá informar o cliente (não precisa desenvolver o cadastro), e os
@@ -99,7 +100,7 @@ as duas tabelas.
 26. Utilizar FireDAC para acesso ao banco de dados.
 
 
-Critérios de Avaliação
+## 💻 Critérios de Avaliação
 
 1. Utilizar MySQL como banco de dados
 
@@ -117,9 +118,9 @@ conhecimentos em SQL
 
 7. A distribuição do projeto será rigorosamente avaliada:
 
-• Disponibilizar arquivo .ini para facilitar conexão com o banco de dados
+  * Disponibilizar arquivo .ini para facilitar conexão com o banco de dados
 
-• Disponibilizar biblioteca do banco de dados
+  * Disponibilizar biblioteca do banco de dados
 
 8. Publique seu teste no GITHub, ou em outro repositório de código, e deixe o
 repositório
