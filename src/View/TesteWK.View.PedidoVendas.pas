@@ -57,6 +57,7 @@ resourcestring
   msCodigoProdutoInvalido = 'Por favor verifique o produto informado.';
   msQuantidadeProdutoInvalido = 'Por favor verifique a quantidade do produto informado.';
   msPrecoVendaProdutoInvalido = 'Por favor verifique o preço de venda do produto informado.';
+  msConfirmacaoSaida = 'Existe um pedido em edição, deseja realmente sair?';
 
 type
   TFrmPedidoVenda = class(TForm)
@@ -97,6 +98,7 @@ type
     procedure grdProdutosKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnNovoPedidoClick(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
     FCliente : TCliente;
@@ -157,6 +159,9 @@ begin
 
     FPedido.CodigoCliente := FCliente.Codigo;
     RecalculaTotal;
+
+    if FPedido.ValorTotal <= 0 then
+      raise Exception.Create(msPedidoSemItens);
 
     if mmProdutosTemp.Active then begin
 
@@ -233,8 +238,15 @@ end;
 procedure TFrmPedidoVenda.btnNovoPedidoClick(Sender: TObject);
 begin
   LimparCampos;
+
   if Assigned(FPedido) then
     FreeAndNil(FPedido);
+
+  if Assigned(FCliente) then
+    FreeAndNil(FCliente);
+
+  if Assigned(FProduto) then
+    FreeAndNil(FProduto);
 
   FPedido := TPedidoVenda.Create(0);
 
@@ -243,6 +255,8 @@ begin
   btnNovoPedido.Visible := False;
   btnCancelar.Visible := True;
   btnGravarPedido.Visible := True;
+
+  edtDataEmissao.Text := DateToStr(Now);
 end;
 
 procedure TFrmPedidoVenda.btnVisualizarPedidoClick(Sender: TObject);
@@ -359,6 +373,13 @@ begin
   end;
 end;
 
+procedure TFrmPedidoVenda.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  if Assigned(FPedido) and Trim(edtNumeroPedido.Text).IsEmpty then
+    CanClose := MessageDlg(msConfirmacaoSaida, mtConfirmation, mbYesNo, 0) = mrYes;
+end;
+
 procedure TFrmPedidoVenda.FormCreate(Sender: TObject);
 begin
   FControllerCliente := TClienteController.Create;
@@ -471,6 +492,15 @@ begin
   edtQuantidade.ReadOnly := True;
   edtValorUnitario.ReadOnly := True;
   edtCodCliente.ReadOnly := True;
+
+  if Assigned(FPedido) then
+    FreeAndNil(FPedido);
+
+  if Assigned(FCliente) then
+    FreeAndNil(FCliente);
+
+  if Assigned(FProduto) then
+    FreeAndNil(FProduto);
 end;
 
 end.

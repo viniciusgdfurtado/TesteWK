@@ -12,6 +12,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   TextHeight = 15
   object pnlCabecalho: TPanel
@@ -118,8 +119,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 99
-    ExplicitHeight = 332
     object grdProdutos: TDBGrid
       Left = 0
       Top = 70
@@ -279,7 +278,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
       TabOrder = 0
       Visible = False
       OnClick = btnGravarPedidoClick
-      ExplicitLeft = 130
     end
     object btnNovoPedido: TButton
       AlignWithMargins = True
@@ -294,7 +292,7 @@ object FrmPedidoVenda: TFrmPedidoVenda
       Images = ilImagens
       TabOrder = 1
       OnClick = btnNovoPedidoClick
-      ExplicitLeft = 6
+      ExplicitTop = 6
     end
     object btnCancelar: TButton
       AlignWithMargins = True
@@ -310,7 +308,6 @@ object FrmPedidoVenda: TFrmPedidoVenda
       TabOrder = 2
       Visible = False
       OnClick = btnCancelarClick
-      ExplicitLeft = 254
     end
   end
   object ilImagens: TImageList
