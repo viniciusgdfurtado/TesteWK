@@ -7,19 +7,28 @@ uses
   TesteWK.Model.Produtos;
 
 type
+  TProdutoVenda = class(TProduto)
+  private
+    FQuantidade: Integer;
+    FValorTotal : Currency;
+  public
+    property Quantidade: Integer read FQuantidade write FQuantidade;
+    property ValorTotal: Currency read FValorTotal write FValorTotal;
+  end;
+
   TPedidoVenda = class
   private
     FNumeroPedido: Integer;
     FDataEmissao: TDate;
     FCodigoCliente: Integer;
     FValorTotal: Currency;
-    FProdutos: TObjectList<TProduto>;
+    FProdutos: TObjectList<TProdutoVenda>;
   public
     property NumeroPedido: Integer read FNumeroPedido write FNumeroPedido;
     property DataEmissao: TDate read FDataEmissao write FDataEmissao;
     property CodigoCliente: Integer read FCodigoCliente write FCodigoCliente;
     property ValorTotal: Currency read FValorTotal write FValorTotal;
-    property Produtos: TObjectList<TProduto> read FProdutos write FProdutos;
+    property Produtos: TObjectList<TProdutoVenda> read FProdutos write FProdutos;
     constructor Create(ACodigoCliente : Integer);
     destructor Destroy; override;
   end;
@@ -35,7 +44,7 @@ begin
   FDataEmissao := Now;
   FCodigoCliente := ACodigoCliente;
   FValorTotal := 0;
-  FProdutos := TObjectList<TProduto>.Create;
+  FProdutos := TObjectList<TProdutoVenda>.Create;
 end;
 
 destructor TPedidoVenda.Destroy;

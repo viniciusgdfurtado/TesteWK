@@ -23,14 +23,14 @@ resourcestring
 type
   TControllerBase = class
   private
-    FQueryConsulta: TFDQuery;
-    FConnectionConsulta: TFDConnection;
+    FQueryController: TFDQuery;
+    FConnectionController: TFDConnection;
     FIniConnection : TIniFile;
     FDriverLink : TFDPhysMySQLDriverLink;
     FWaitCursor : TFDGUIxWaitCursor;
   public
-    property QueryConsulta: TFDQuery read FQueryConsulta write FQueryConsulta;
-    property ConnectionConsulta: TFDConnection read FConnectionConsulta write FConnectionConsulta;
+    property QueryController: TFDQuery read FQueryController write FQueryController;
+    property ConnectionController: TFDConnection read FConnectionController write FConnectionController;
     constructor Create;
     destructor Destroy; override;
   end;
@@ -47,8 +47,8 @@ var
   lDataBase : String;
   lUserName : String;
   lPassword : String;
+  lVendorLib : String;
 begin
-
   lCaminhoIni := ExtractFilePath(ParamStr(0)) + 'config.ini';
 
   FIniConnection := TIniFile.Create(lCaminhoIni);
@@ -58,45 +58,46 @@ begin
     lDataBase := FIniConnection.ReadString('Database', 'Database', 'wk');
     lUserName := FIniConnection.ReadString('Database', 'Username', 'root');
     lPassword := FIniConnection.ReadString('Database', 'Password', '44980366899@');
+    lVendorLib := FIniConnection.ReadString('Database', 'VendorLib', ExtractFilePath(ParamStr(0)) +  'lib\libmysql.dll');
+    FIniConnection.UpdateFile;
   end;
 
   FDriverLink := TFDPhysMySQLDriverLink.Create(nil);
-  FDriverLink.VendorLib := 'libmysql.dll';
-  FDriverLink.VendorHome := ExtractFilePath(ParamStr(0));
+  FDriverLink.VendorLib := lVendorLib;
 
   FWaitCursor := TFDGUIxWaitCursor.Create(nil);
 
-  FConnectionConsulta := TFDConnection.Create(nil);
+  FConnectionController := TFDConnection.Create(nil);
   try
-    FConnectionConsulta.Params.DriverID := 'MySQL';
-    FConnectionConsulta.Params.Add('Server=' + lServer);
-    FConnectionConsulta.Params.Add('Port=' + lPort);
-    FConnectionConsulta.Params.Database := lDataBase;
-    FConnectionConsulta.Params.UserName := lUserName;
-    FConnectionConsulta.Params.Password := lPassword;
+    FConnectionController.Params.DriverID := 'MySQL';
+    FConnectionController.Params.Add('Server=' + lServer);
+    FConnectionController.Params.Add('Port=' + lPort);
+    FConnectionController.Params.Database := lDataBase;
+    FConnectionController.Params.UserName := lUserName;
+    FConnectionController.Params.Password := lPassword;
   except on E: Exception do
     raise Exception.Create(Format(msErroConexao, [lCaminhoIni]));
   end;
 
-  FQueryConsulta := TFDQuery.Create(FConnectionConsulta);
-  FQueryConsulta.Connection := FConnectionConsulta;
+  FQueryController := TFDQuery.Create(FConnectionController);
+  FQueryController.Connection := FConnectionController;
 
 end;
 
 destructor TControllerBase.Destroy;
 begin
-  if Assigned(QueryConsulta) then begin
-    if QueryConsulta.Active then
-      QueryConsulta.Close;
+  if Assigned(FQueryController) then begin
+    if FQueryController.Active then
+      FQueryController.Close;
 
-    FreeAndNil(FQueryConsulta);
+    FreeAndNil(FQueryController);
   end;
 
-  if Assigned(FConnectionConsulta) then begin
-    if FConnectionConsulta.Connected then
-      FConnectionConsulta.Close;
+  if Assigned(FConnectionController) then begin
+    if FConnectionController.Connected then
+      FConnectionController.Close;
 
-    FreeAndNil(FConnectionConsulta);
+    FreeAndNil(FConnectionController);
   end;
 
   if Assigned(FIniConnection) then

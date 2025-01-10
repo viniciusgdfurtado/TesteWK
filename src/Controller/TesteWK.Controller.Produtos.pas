@@ -12,6 +12,11 @@ uses
   TesteWK.Model.Produtos,
   TesteWK.Controller.Base;
 
+resourcestring
+  msFalhaAoRecuperarProdutoCodigo = 'Ocorreu um erro ao recuperar o produto %s, por favor tente novamente.';
+  msProdutoInexistente = 'Não encontramos o registro do produto %s, por favor tente novamente ou informe um novo código.';
+  msNenhumProdutoNaBase = 'Não há registros de produtos para exibição.';
+
 type
   TProdutoController = class(TControllerBase)
   private
@@ -28,55 +33,60 @@ implementation
 { TProdutoController }
 
 function TProdutoController.GetAllProdutos: TObjectList<TProduto>;
-var
-  Produto : TProduto;
 begin
-  Result := TObjectList<TProduto>.Create;
+  Result := nil;
   try
-    QueryConsulta.Close;
-    QueryConsulta.SQL.Clear;
-    QueryConsulta.SQL.Add(cSQLGetAllProdutos);
-    QueryConsulta.Open;
 
-    QueryConsulta.First;
-    while not QueryConsulta.Eof do begin
-      Produto := TProduto.Create;
+    QueryController.Close;
+    QueryController.SQL.Clear;
+    QueryController.SQL.Add(cSQLGetAllProdutos);
+    QueryController.Open;
 
-      Produto.Codigo := QueryConsulta.FieldByName('codigo').AsInteger;
-      Produto.Descricao := QueryConsulta.FieldByName('descricao').AsString;
-      Produto.PrecoVenda := QueryConsulta.FieldByName('preco_venda').AsCurrency;
+    if QueryController.IsEmpty then
+      raise Exception.Create(msNenhumProdutoNaBase);
 
+    Result := TObjectList<TProduto>.Create;
+
+    QueryController.First;
+    while not QueryController.Eof do begin
+
+      var Produto := TProduto.Create;
+      Produto.Codigo := QueryController.FieldByName('codigo').AsInteger;
+      Produto.Descricao := QueryController.FieldByName('descricao').AsString;
+      Produto.PrecoVenda := QueryController.FieldByName('preco_venda').AsCurrency;
       Result.Add(Produto);
 
-      QueryConsulta.Next;
+      QueryController.Next;
     end;
 
   except on E: Exception do
-    Result := nil;
+    raise;
   end;
 end;
 
 function TProdutoController.GetProdutoByCodigo(ACodigo: Integer): TProduto;
 begin
-  Result := TProduto.Create;
+  Result := nil;
   try
-    if not ConnectionConsulta.Connected then
-      ConnectionConsulta.Connected := True;
+    if ACodigo <= 0 then
+      raise Exception.Create(Format(msFalhaAoRecuperarProdutoCodigo, [ACodigo.ToString]));
 
-    QueryConsulta.Close;
-    QueryConsulta.SQL.Clear;
-    QueryConsulta.SQL.Add(cSQLGetProdutoByCodigo);
-    QueryConsulta.ParamByName('codigo').AsInteger := ACodigo;
-    QueryConsulta.Open;
+    QueryController.Close;
+    QueryController.SQL.Clear;
+    QueryController.SQL.Add(cSQLGetProdutoByCodigo);
+    QueryController.ParamByName('codigo').AsInteger := ACodigo;
+    QueryController.Open;
 
-    if not QueryConsulta.IsEmpty then begin
-      Result.Codigo := QueryConsulta.FieldByName('codigo').AsInteger;
-      Result.Descricao := QueryConsulta.FieldByName('descricao').AsString;
-      Result.PrecoVenda := QueryConsulta.FieldByName('preco_venda').AsCurrency;
-    end;
+    if QueryController.IsEmpty then
+      raise Exception.Create(msProdutoInexistente);
+
+    Result := TProduto.Create;
+    Result.Codigo := QueryController.FieldByName('codigo').AsInteger;
+    Result.Descricao := QueryController.FieldByName('descricao').AsString;
+    Result.PrecoVenda := QueryController.FieldByName('preco_venda').AsCurrency;
 
   except on E: Exception do
-    Result := nil;
+    raise;
   end;
 end;
 

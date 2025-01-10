@@ -12,6 +12,11 @@ uses
   TesteWK.Model.Clientes,
   TesteWK.Controller.Base;
 
+resourcestring
+  msFalhaAoRecuperarClienteCodigo = 'Ocorreu um erro ao recuperar o cliente %s, por favor tente novamente.';
+  msClienteInexistente = 'Não encontramos o registro do cliente %s, por favor tente novamente ou informe um novo código.';
+  msNenhumClienteNaBase = 'Não há registros de cliente para exibição.';
+
 type
   TClienteController = class(TControllerBase)
   private
@@ -28,57 +33,62 @@ implementation
 { TClienteController }
 
 function TClienteController.GetAllClientes: TObjectList<TCliente>;
-var
-  Cliente : TCliente;
 begin
-  Result := TObjectList<TCliente>.Create;
+  Result := nil;
   try
-    QueryConsulta.Close;
-    QueryConsulta.SQL.Clear;
-    QueryConsulta.SQL.Add(cSQLGetAllClientes);
-    QueryConsulta.Open;
 
-    QueryConsulta.First;
-    while not QueryConsulta.Eof do begin
-      Cliente := TCliente.Create;
+    QueryController.Close;
+    QueryController.SQL.Clear;
+    QueryController.SQL.Add(cSQLGetAllClientes);
+    QueryController.Open;
 
-      Cliente.Codigo := QueryConsulta.FieldByName('codigo').AsInteger;
-      Cliente.Nome := QueryConsulta.FieldByName('nome').AsString;
-      Cliente.Cidade := QueryConsulta.FieldByName('cidade').AsString;
-      Cliente.UF := QueryConsulta.FieldByName('uf').AsString;
+    if QueryController.IsEmpty then
+      raise Exception.Create(msNenhumClienteNaBase);
 
+    Result := TObjectList<TCliente>.Create;
+
+    QueryController.First;
+    while not QueryController.Eof do begin
+
+      var Cliente := TCliente.Create;
+      Cliente.Codigo := QueryController.FieldByName('codigo').AsInteger;
+      Cliente.Nome := QueryController.FieldByName('nome').AsString;
+      Cliente.Cidade := QueryController.FieldByName('cidade').AsString;
+      Cliente.UF := QueryController.FieldByName('uf').AsString;
       Result.Add(Cliente);
 
-      QueryConsulta.Next;
+      QueryController.Next;
     end;
 
   except on E: Exception do
-    Result := nil;
+    raise;
   end;
 end;
 
 function TClienteController.GetClienteByCodigo(ACodigo: Integer): TCliente;
 begin
-  Result := TCliente.Create;
+  Result := nil;
   try
-    if not ConnectionConsulta.Connected then
-      ConnectionConsulta.Connected := True;
+    if ACodigo <= 0 then
+      raise Exception.Create(Format(msFalhaAoRecuperarClienteCodigo, [ACodigo.ToString]));
 
-    QueryConsulta.Close;
-    QueryConsulta.SQL.Clear;
-    QueryConsulta.SQL.Add(cSQLGetClienteByCodigo);
-    QueryConsulta.ParamByName('codigo').AsInteger := ACodigo;
-    QueryConsulta.Open;
+    QueryController.Close;
+    QueryController.SQL.Clear;
+    QueryController.SQL.Add(cSQLGetClienteByCodigo);
+    QueryController.ParamByName('codigo').AsInteger := ACodigo;
+    QueryController.Open;
 
-    if not QueryConsulta.IsEmpty then begin
-      Result.Codigo := QueryConsulta.FieldByName('codigo').AsInteger;
-      Result.Nome := QueryConsulta.FieldByName('nome').AsString;
-      Result.Cidade := QueryConsulta.FieldByName('cidade').AsString;
-      Result.UF := QueryConsulta.FieldByName('uf').AsString;
-    end;
+    if QueryController.IsEmpty then
+      raise Exception.Create(Format(msClienteInexistente, [ACodigo.ToString]));
+
+    Result := TCliente.Create;
+    Result.Codigo := QueryController.FieldByName('codigo').AsInteger;
+    Result.Nome := QueryController.FieldByName('nome').AsString;
+    Result.Cidade := QueryController.FieldByName('cidade').AsString;
+    Result.UF := QueryController.FieldByName('uf').AsString;
 
   except on E: Exception do
-    Result := nil;
+    raise;
   end;
 end;
 
